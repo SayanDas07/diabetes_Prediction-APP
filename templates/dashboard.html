@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Diabetes Prediction App{% endblock %}
+
+{% block content %}
+<style>
+.risk-high { color: red; }
+.risk-low { color: green; }
+</style>
+<div class="card">
+    <h1>👋 Welcome back, {{ current_user.username }}!</h1>
+    <p>Here's your health dashboard overview</p>
+    
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ predictions|length }}</div>
+            <h3>Total Predictions</h3>
+            <p>Lifetime assessments</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% if predictions %}
+                    {{ "🔴" if predictions[0].prediction == 1 else "🟢" }}
+                {% else %}
+                    📊
+                {% endif %}
+            </div>
+            <h3>Latest Result</h3>
+            <p>
+                {% if predictions %}
+                    {{ "High Risk" if predictions[0].prediction == 1 else "Low Risk" }}
+                {% else %}
+                    No predictions yet
+                {% endif %}
+            </p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% if predictions %}
+                    {{ (predictions[0].probability * 100)|round|int }}%
+                {% else %}
+                    --
+                {% endif %}
+            </div>
+            <h3>Risk Probability</h3>
+            <p>Latest assessment</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🎯 Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{{ url_for('main.predict') }}" class="btn">🔍 New Prediction</a>
+        <a href="{{ url_for('main.history') }}" class="btn btn-secondary">📊 View History</a>
+        <a href="{{ url_for('main.profile') }}" class="btn btn-secondary">👤 Profile</a>
+    </div>
+</div>
+
+{% if predictions %}
+<div class="card">
+    <h2>📈 Recent Predictions</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Result</th>
+                    <th>Probability</th>
+                    <th>BMI</th>
+                    <th>Age Group</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td>{{ prediction.date.strftime('%Y-%m-%d %H:%M') if prediction.date else '' }}</td>
+                    <td>
+                        <span class="{{ 'risk-high' if prediction.prediction == 1 else 'risk-low' }}">
+                            {{ "High Risk" if prediction.prediction == 1 else "Low Risk" }}
+                        </span>
+                    </td>
+                    <td>{{ (prediction.probability * 100)|round(1) }}%</td>
+                    <td>{{ prediction.bmi }}</td>
+                    <td>Category {{ prediction.age }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if predictions|length >= 5 %}
+        <p style="text-align: center; margin-top: 1rem;">
+            <a href="{{ url_for('main.history') }}">View all predictions →</a>
+        </p>
+    {% endif %}
+</div>
+{% else %}
+<div class="card" style="text-align: center;">
+    <h2>🎯 Get Started</h2>
+    <p>You haven't made any predictions yet. Let's get your first health assessment!</p>
+    <a href="{{ url_for('main.predict') }}" class="btn">🔍 Make Your First Prediction</a>
+</div>
+{% endif %}
+{% endblock %}

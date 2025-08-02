@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - Diabetes Prediction App{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 Your Prediction History</h2>
+    <p>Complete record of all your diabetes risk assessments</p>
+
+    {% if predictions %}
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Result</th>
+                    <th>Probability</th>
+                    <th>BMI</th>
+                    <th>Age</th>
+                    <th>Blood Pressure</th>
+                    <th>Cholesterol</th>
+                    <th>General Health</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prediction in predictions %}
+                <tr>
+                    <td>{{ prediction.created_at.split('.')[0] }}</td>
+                    <td>
+                        {% if prediction.prediction == 1 %}
+                        <span style="font-weight: bold; color: red;">High Risk 🔴</span>
+                        {% else %}
+                        <span style="font-weight: bold; color: green;">Low Risk 🟢</span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ (prediction.probability * 100)|round(1) }}%</td>
+                    <td>{{ prediction.bmi }}</td>
+                    <td>Category {{ prediction.age }}</td>
+                    <td>{{ "Yes" if prediction.high_bp == 1 else "No" }}</td>
+                    <td>{{ "Yes" if prediction.high_chol == 1 else "No" }}</td>
+                    <td>
+                        {% set health_map = {1: "Excellent", 2: "Very Good", 3: "Good", 4: "Fair", 5: "Poor"} %}
+                        {{ health_map[prediction.gen_hlth] }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+        <a href="{{ url_for('main.predict') }}" class="btn">🔍 New Prediction</a>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">← Back to Dashboard</a>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 2rem;">
+        <h3>📋 No Predictions Yet</h3>
+        <p>You haven't made any predictions yet. Start your health journey today!</p>
+        <a href="{{ url_for('main.predict') }}" class="btn">🔍 Make Your First Prediction</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Diabetes Prediction App{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👤 Your Profile</h2>
+    
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h3>Account Information</h3>
+            <p><strong>Username:</strong> {{ current_user.username }}</p>
+            <p><strong>Email:</strong> {{ current_user.email }}</p>
+            <p><strong>Member Since:</strong> {{ "Recently joined" }}</p>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Health Stats</h3>
+            <p><strong>Total Predictions:</strong> {{ prediction_count or 0 }}</p>
+            <p><strong>Last Assessment:</strong> {{ last_prediction_date or "Never" }}</p>
+            <p><strong>Account Status:</strong> <span style="color: green;">Active</span></p>
+        </div>
+    </div>
+    
+    <div style="margin-top: 2rem;">
+        <h3>🔧 Account Actions</h3>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+            <a href="{{ url_for('main.predict') }}" class="btn">🔍 New Prediction</a>
+            <a href="{{ url_for('main.history') }}" class="btn btn-secondary">📊 View History</a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">🚪 Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>📋 Health Tips</h3>
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <h4>🍎 Nutrition</h4>
+            <p>Maintain a balanced diet with plenty of vegetables and lean proteins</p>
+        </div>
+        <div class="stat-card">
+            <h4>🏃 Exercise</h4>
+            <p>Regular physical activity helps maintain healthy blood sugar levels</p>
+        </div>
+        <div class="stat-card">
+            <h4>🩺 Regular Checkups</h4>
+            <p>Schedule regular health screenings and monitor your vital signs</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
