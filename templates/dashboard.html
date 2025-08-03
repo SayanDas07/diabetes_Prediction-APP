@@ -74,7 +74,7 @@
             <tbody>
                 {% for prediction in predictions %}
                 <tr>
-                    <td>{{ prediction.date.strftime('%Y-%m-%d %H:%M') if prediction.date else '' }}</td>
+                    <td>{{ prediction.created_at.split('.')[0] }}</td>
                     <td>
                         <span class="{{ 'risk-high' if prediction.prediction == 1 else 'risk-low' }}">
                             {{ "High Risk" if prediction.prediction == 1 else "Low Risk" }}
